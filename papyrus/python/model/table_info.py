@@ -10,9 +10,10 @@ from sqlalchemy import (
     Integer, String, UUID
 )
 
-from . import BaseModel, Columns
+from . import BaseModel
+from . import ColumnInfo
 
-class Tables(BaseModel):
+class TableInfo(BaseModel):
     """
     Entity store info about a table
     ---
@@ -27,6 +28,11 @@ class Tables(BaseModel):
     owner: Mapped[str] = mapped_column("owner", String)
     updated_by: Mapped[str] = mapped_column("updated_by", String)
 
-    columns: Mapped[List["Columns"]] = relationship(
+    columns: Mapped[List["ColumnInfo"]] = relationship(
         back_populates="table", cascade="all, delete-orphan"
     )
+
+    def __str__(self):
+        # pylint: disable=line-too-long
+        return f"{{schema_id:{self.schema_id},column_count:{self.column_count},data_source_format:{self.data_source_format},url:{self.url},created_by:{self.created_by},owner:{self.owner},updated_by:{self.updated_by},columns:{self.columns}}}"
+        # pylint: enable=line-too-long

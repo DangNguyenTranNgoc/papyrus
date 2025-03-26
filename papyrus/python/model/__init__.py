@@ -4,11 +4,11 @@
 Data models
 """
 from .base_model import BaseModel
-from .columns import Columns
-from .tables import Tables
+from .column_info import ColumnInfo
+from .table_info import TableInfo
 
 __all__ = [
     "BaseModel",
-    "Columns",
-    "Tables"
+    "ColumnInfo",
+    "TableInfo"
 ]
