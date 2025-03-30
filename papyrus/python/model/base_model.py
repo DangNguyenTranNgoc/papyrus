@@ -5,6 +5,7 @@ Base data model class
 """
 from datetime import datetime
 from uuid import UUID, uuid4
+from dataclasses import dataclass
 from sqlalchemy.orm import (
     DeclarativeBase, Mapped, mapped_column
 )
@@ -12,6 +13,7 @@ from sqlalchemy import (
     String, DateTime, Boolean
 )
 
+@dataclass
 class BaseModel(DeclarativeBase):
     """
     Based Entity class

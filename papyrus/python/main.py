@@ -5,14 +5,14 @@ Papyrus is a tool for storing and managing performance data.
 
 This is the controller module for the Papyrus tool.
 """
-from uuid import uuid4, UUID
+from uuid import uuid4
 
-from model import BaseModel, ColumnInfo, TableInfo
+from model import BaseModel, ColumnInfo, TableInfo, NamespaceInfo
 from utils import (
     get_logger, start_logging,
     SQLAlchemyDatabase
 )
-from dao.table_repository import TableRepository
+from dao import TableRepository, Repositories
 
 
 LOGGER = get_logger("papyrus.main")
@@ -20,18 +20,25 @@ start_logging()
 
 LOGGER.info("Papyrus is starting...")
 db = SQLAlchemyDatabase(
-    "sqlite:////tests/data/uc.db"
+    "sqlite:////Users/tranngocdangnguyen/Projects/papyrus/papyrus/tests/data/uc.db"
 )
 db.connect()
 LOGGER.info("Database connected")
 BaseModel.metadata.create_all(db.session.get_bind())
+repositories = Repositories(db)
+LOGGER.info("Repositories created")
 
 LOGGER.info("Database schema created")
 with db.session as s:
-    metric = TableInfo(
+    metric = NamespaceInfo(
+        name="metric",
+        comment="Metric namespace",
+        created_by="nguyen",
+        owner="nguyen",
+        updated_by="nguyen",
+        tables=[TableInfo(
         name="metric",
         comment="Metric table",
-        schema_id=uuid4(),
         column_count=2,
         data_source_format="csv",
         url="file://catalog/etc/db/uc.db",
@@ -61,15 +68,14 @@ with db.session as s:
             dtype_interval="",
             nullable=True,
         )]
-    )
+    )])
     s.add(metric)
     s.commit()
     print(metric)
-    print(metric.columns)
 
 print("="*50)
-table_repo = TableRepository(db)
-table = table_repo.get_table_by_id(UUID("abfe152b71f6493db52195c716afc329"))
+table_repo = TableRepository(db, repositories)
+table = table_repo.get_table_by_id(metric.id)
 print(table)
 
 print("="*50)
